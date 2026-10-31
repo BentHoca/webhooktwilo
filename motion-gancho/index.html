@@ -320,11 +320,11 @@ scene(31.2,37.0,`
    <div class="abs" style="left:32px;right:32px;top:98px;height:14px;border-radius:7px;background:#E3E9F5"><div id="pb" style="height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#6C97FF,#2F6BFF)"></div></div></div>
  `,(t,sc)=>{
   S(sc.q('#ta'),both(t,31.95,33.3,{dy:24}));S(sc.q('#tb'),both(t,33.42,35.7,{dy:24}));S(sc.q('#tc'),pop(t,35.8,{dy:24}));
-  S(sc.q('#kc'),pop(t,31.25,{d:.6,dy:40,s0:.95}));drawSeq(sc.q('#kcv'),'k4',t-29.45);
-  S(sc.q('#nw'),pop(t,31.55,{dy:12,s0:.6}));
+  const sl=390*(1-eio(P(t,33.75,.7)));const kp=pop(t,31.25,{d:.6,dy:40,s0:.95});kp.x+=sl;S(sc.q('#kc'),kp);drawSeq(sc.q('#kcv'),'k4',t-29.45);
+  const np=pop(t,31.55,{dy:12,s0:.6});np.x+=sl;S(sc.q('#nw'),np);
   const a=pop(t,33.95,{d:.7,dy:90});a.y+=Math.sin(t*1.3)*5;S(sc.q('#q0'),a);
   const b=pop(t,34.15,{d:.7,dy:90});b.y+=Math.sin(t*1.3+1)*5;S(sc.q('#q1'),b);
-  drawSeq(sc.q('#q0 canvas'),'kv0',t-30.3,.75);drawSeq(sc.q('#q1 canvas'),'kv1',t-34.0,1);
+  drawSeq(sc.q('#q0 canvas'),'kv0',t-30.3,.75);drawSeq(sc.q('#q1 canvas'),'kv1',t-34.0,.8);
   S(sc.q('#hq'),pop(t,34.85,{dy:14}));
   S(sc.q('#pg'),pop(t,35.0,{dy:40}));const k=eio(P(t,35.2,1.3));
   sc.q('#pb').style.width=(k*100).toFixed(1)+'%';sc.q('#pct').textContent=Math.round(k*100)+'%';
@@ -357,7 +357,7 @@ scene(37.0,41.55,`
   S(sc.q('#ta'),both(t,37.4,40.5,{dy:24}));
   const zk=eio(P(t,40.7,.85));const m=pop(t,37.05,{d:.8,dy:90,b0:16,s0:.92});
   m.s*=1+1.6*zk;m.b+=P(t,41.1,.45)*24;m.o*=1-P(t,41.25,.3);S(sc.q('#mon'),m);
-  drawSeq(sc.q('#mcv'),'kv1',t-37.0,1);
+  drawSeq(sc.q('#mcv'),'kv1',t-37.0,.8);
   const c=sc.q('.cursor');const k1=eio(P(t,37.9,.8)),k2=eio(P(t,39.1,.7));
   cursorAt(c,lerp(lerp(1300,900,k1),1340,k2),lerp(lerp(700,420,k1),520,k2),clickK(t,39.85));S(c,{o:cl(P(t,37.8,.2))});
  });
