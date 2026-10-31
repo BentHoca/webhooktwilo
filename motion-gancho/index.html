@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>Motion gancho</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#F4F6FA}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:Inter,sans-serif;color:#0B1220}
+#bg{position:absolute;inset:0}
+#dots{position:absolute;inset:0;background-image:radial-gradient(#d3dae8 1.2px,transparent 1.3px);background-size:32px 32px;opacity:.55;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,#000 0%,transparent 75%)}
+.scene{position:absolute;left:0;top:0;width:1920px;height:1080px;display:none;transform-origin:960px 500px}
+.abs{position:absolute}
+.ib{display:inline-block}
+.title{position:absolute;left:0;width:1920px;text-align:center}
+.serif{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-1.5px;color:#0B1220;line-height:1}
+.it{font-style:italic}
+.blue{color:#2F6BFF}
+.mut{color:#7A8599}
+.card{position:absolute;background:#fff;border:1px solid #E5E9F2;border-radius:30px;
+  box-shadow:0 40px 80px -30px rgba(20,40,100,.22),0 10px 24px -10px rgba(20,40,100,.12)}
+.phone{position:absolute;border-radius:34px;overflow:hidden;border:6px solid #fff;background:#dfe5ef;
+  box-shadow:0 40px 80px -28px rgba(20,40,100,.35),0 12px 26px -10px rgba(20,40,100,.18)}
+.phone img,.phone canvas,.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;background:#fff;border:1px solid #E5E9F2;
+  font:600 24px Inter;color:#0B1220;white-space:nowrap;box-shadow:0 14px 30px -14px rgba(20,40,100,.25)}
+.pill.b{background:#2F6BFF;border-color:#2F6BFF;color:#fff;box-shadow:0 16px 34px -12px rgba(47,107,255,.55)}
+.pill.sm{font-size:19px;padding:9px 16px;gap:8px}
+.row{position:absolute;display:flex;justify-content:center}
+.ico{display:flex;align-items:center;justify-content:center}
+.dot{width:12px;height:12px;border-radius:50%;background:#2F6BFF;box-shadow:0 0 0 6px rgba(47,107,255,.18)}
+.cursor{position:absolute;left:0;top:0;width:40px;height:48px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));z-index:50}
+.cursor svg{transform-origin:0 0}
+svg.lines{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:visible;pointer-events:none}
+#cap{position:absolute;left:0;top:948px;width:1920px;text-align:center;font:600 40px Inter;letter-spacing:-.3px}
+#cap span{display:inline-block;margin:0 6px;text-shadow:0 0 18px #F4F6FA,0 0 4px #F4F6FA}
+/* ad library */
+.win{position:absolute;background:#fff;border-radius:26px;border:1px solid #E3E6EC;overflow:hidden;
+  box-shadow:0 50px 100px -40px rgba(20,40,100,.30),0 12px 30px -12px rgba(20,40,100,.15)}
+.wbar{position:absolute;left:0;top:0;right:0;height:58px;background:#F3F4F6;border-bottom:1px solid #E5E7EB}
+.wd{position:absolute;top:23px;width:13px;height:13px;border-radius:50%;background:#D1D5DB}
+.chip{position:absolute;height:50px;border:1px solid #CED0D4;border-radius:10px;display:flex;align-items:center;gap:10px;padding:0 16px;font:600 19px Inter;color:#1C1E21;background:#fff}
+.adc{position:absolute;top:244px;width:350px;height:566px;border:1px solid #DADDE1;border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.adc .in{padding:16px 18px 12px}
+.adc .st{font:700 17px Inter;color:#1F9D55;display:flex;align-items:center;gap:8px}
+.adc .st i{width:10px;height:10px;border-radius:50%;background:#1F9D55;display:block}
+.adc .l{font:500 14.5px Inter;color:#65676B;margin-top:6px}
+.adc .pl{display:flex;gap:6px;align-items:center;margin-top:6px;font:500 14.5px Inter;color:#65676B}
+.adc .pl b{width:17px;height:17px;border-radius:50%;background:#D8DADF;display:block}
+.adc .bt{margin-top:12px;height:38px;border-radius:8px;background:#E4E6EB;font:600 15.5px Inter;color:#1C1E21;display:flex;align-items:center;justify-content:center}
+.adc .adv{display:flex;align-items:center;gap:10px;padding:12px 18px 8px;border-top:1px solid #E4E6EB}
+.adc .av{width:40px;height:40px;border-radius:50%}
+.adc .nm{font:700 16px Inter;color:#1C1E21}
+.adc .sp{font:500 13.5px Inter;color:#65676B}
+.adc .tx{padding:0 18px 10px;font:400 15px Inter;color:#1C1E21}
+.adc .im{flex:1;min-height:0;position:relative}
+.adc .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div><div id="dots"></div>
+  <div id="scenes"></div>
+  <div id="cap"></div>
+</div>
+<script src="seq.js"></script>
+<script>
+// ---------- helpers ----------
+const cl=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const P=(t,a,d)=>cl((t-a)/d);
+const eo=k=>1-Math.pow(1-k,3);
+const eio=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+const bk=k=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(k-1,3)+c1*Math.pow(k-1,2)};
+const lerp=(a,b,k)=>a+(b-a)*k;
+function S(e,o={}){if(!e)return;const{o:op=1,x=0,y=0,s=1,b=0,r=0}=o;
+  e.style.opacity=op;e.style.transform=`translate(${x.toFixed(2)}px,${y.toFixed(2)}px) scale(${s.toFixed(4)}) rotate(${r}deg)`;
+  e.style.filter=b>0.15?`blur(${b.toFixed(1)}px)`:'none';e.style.visibility=op<=0.002?'hidden':'visible';}
+function pop(t,a,{d=.55,dy=26,dx=0,s0=.9,b0=12}={}){const k=P(t,a,d),e=eo(k);
+  return{o:cl(k*2.2),x:(1-e)*dx,y:(1-e)*dy,s:s0+(1-s0)*bk(k),b:(1-e)*b0}}
+function out(t,a,{d=.35,dy=-16,b1=16}={}){const k=P(t,a,d),e=eio(k);return{o:1-e,y:e*dy,b:e*b1,s:1-.04*e}}
+function both(t,a,z,oa={},oz={}){const p=pop(t,a,oa);if(z==null||t<z)return p;const q=out(t,z,oz);
+  return{o:p.o*q.o,x:p.x,y:p.y+q.y,s:p.s*q.s,b:p.b+q.b}}
+const fmt=n=>Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const I={
+ check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ spark:'<path d="M12 2.5l2.3 6.2 6.2 2.3-6.2 2.3L12 19.5l-2.3-6.2L3.5 11l6.2-2.3z"/>',
+ search:'<circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/>',code:'<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>',
+ film:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 16h4M17 8h4M17 16h4"/>',
+ pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',play:'<path d="M7 4.5v15l12.5-7.5z"/>',
+ trend:'<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ chev:'<path d="m6 9 6 6 6-6"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ hd:'<rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M7 9v6M7 12h3M10 9v6M14 9v6h1.5a3 3 0 0 0 0-6z"/>'
+};
+const ic=(n,sz=24,col='currentColor',sw=2.4,fill=false)=>`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="${fill?col:'none'}" stroke="${fill?'none':col}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const CURSOR='<div class="cursor"><svg width="40" height="48" viewBox="-2 -2 32 46"><path d="M0 0 L0 34 L9 26 L15 40 L21 37 L15 24 L27 24 Z" fill="#0B1220" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/></svg></div>';
+const AD=i=>`assets/ad${i}.png`;
+const phone=(src,l,t,w,h,extra='',id='')=>`<div class="phone" ${id?`id="${id}"`:''} style="left:${l}px;top:${t}px;width:${w}px;height:${h}px">${src.startsWith('canvas')?`<canvas width="${w*1.5|0}" height="${h*1.5|0}" data-seq="${src.split(':')[1]}"></canvas>`:`<img src="${src}">`}${extra}</div>`;
+function cursorAt(c,x,y,click=0){c.style.left=x+'px';c.style.top=y+'px';c.firstChild.style.transform=`scale(${1-.18*click})`}
+function clickK(t,a){return t<a||t>a+.3?0:Math.sin(P(t,a,.3)*Math.PI)}
+// image sequences (pre-extracted video frames)
+const SEQ={};
+function loadSeq(name,n){SEQ[name]=[];for(let i=1;i<=n;i++){const im=new Image();im.src=`seq/${name}/${String(i).padStart(4,'0')}.jpg`;SEQ[name].push(im)}}
+for(const k in (window.SEQN||{}))loadSeq(k,SEQN[k]);
+function drawSeq(cv,name,vt,speed=1){const arr=SEQ[name];if(!arr||!arr.length)return;let i=Math.floor(Math.max(0,vt)*30*speed);i=Math.min(arr.length-1,i);
+  const im=arr[i];if(!im.complete||!im.naturalWidth)return;const c=cv.getContext('2d');const cw=cv.width,ch=cv.height,iw=im.naturalWidth,ih=im.naturalHeight;
+  const s=Math.max(cw/iw,ch/ih);const w=iw*s,h=ih*s;c.drawImage(im,(cw-w)/2,(ch-h)/2,w,h)}
+function drawLine(p,k){p.style.strokeDashoffset=(1-k).toFixed(4);p.style.opacity=k>0?1:0}
+
+const root=document.getElementById('scenes');const scenes=[];
+function scene(a,z,html,upd){root.insertAdjacentHTML('beforeend',`<div class="scene">${html}</div>`);const r=root.lastElementChild;
+  const sc={a,z,root:r,q:s=>r.querySelector(s),qa:s=>[...r.querySelectorAll(s)],upd};scenes.push(sc);return sc}
+
+// ================= S1  0 – 3.15  "criativos validados" =================
+{
+ const imgs=[0,1,2,4,5];let cards='';
+ imgs.forEach((im,i)=>{const cx=960+(i-2)*300;cards+=`<div class="abs c1" style="left:${cx-125}px;top:${340+Math.abs(i-2)*26}px;width:250px;height:444px">
+   ${phone(AD(im),0,0,250,444)}<div class="row" style="left:0;right:0;bottom:-26px"><div class="pill b sm bd">${ic('check',20,'#fff',3.2)}Validado</div></div></div>`});
+ scene(0,3.15,`
+  <div class="title" id="l1" style="top:92px;font:600 30px Inter;letter-spacing:4px;color:#7A8599">COMO CRIAR</div>
+  <div class="title serif" style="top:134px;font-size:124px"><span class="ib" id="w1">criativos</span> <span class="ib it blue" id="w2">validados</span></div>
+  ${cards}`,
+ (t,sc)=>{
+  S(sc.q('#l1'),pop(t,.9,{dy:14}));S(sc.q('#w1'),pop(t,1.75,{dy:40,b0:16}));S(sc.q('#w2'),pop(t,2.25,{dy:40,b0:16,s0:.8}));
+  sc.qa('.c1').forEach((c,i)=>{const p=pop(t,.05+i*.11,{d:.85,dy:160,b0:20,s0:.86});p.y+=Math.sin(t*1.4+i*1.3)*6;p.r=(i-2)*3.5;S(c,p)});
+  sc.qa('.bd').forEach((b,i)=>S(b,pop(t,2.3+i*.08,{d:.45,dy:12,s0:.5,b0:6})));
+ });
+}
+// ================= S2  3.15 – 7.55  "o mesmo modelo que eu uso para vender e anunciar" =================
+scene(3.15,7.55,`
+ <div class="title serif" id="t" style="top:64px;font-size:80px">O mesmo modelo que eu <span class="it blue">uso</span></div>
+ <svg class="lines"><path id="ln1" d="M712 470 H795" pathLength="1" stroke="#2F6BFF" stroke-width="3" stroke-dasharray="1" fill="none" stroke-linecap="round"/>
+  <path id="ln2" d="M1125 470 H1208" pathLength="1" stroke="#2F6BFF" stroke-width="3" stroke-dasharray="1" fill="none" stroke-linecap="round"/></svg>
+ ${phone(AD(2),795,200,330,586,`
+   <div class="abs" style="left:0;right:0;top:0;height:74px;background:rgba(255,255,255,.94);display:flex;align-items:center;gap:12px;padding:0 16px">
+     <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7AA2FF,#2F6BFF)"></div>
+     <div><div style="font:700 18px Inter">Tua Loja</div><div style="font:500 14px Inter;color:#7A8599">Patrocinado</div></div></div>
+   <div class="abs" style="left:14px;right:14px;bottom:14px;height:54px;border-radius:14px;background:#2F6BFF;color:#fff;font:700 19px Inter;display:flex;align-items:center;justify-content:center">Comprar agora</div>`,'ph')}
+ <div class="card" id="c1" style="left:290px;top:360px;width:420px;height:224px">
+   <div class="abs" style="left:30px;top:28px;display:flex;align-items:center;gap:12px;font:600 24px Inter;color:#7A8599">
+     <div class="ico" style="width:44px;height:44px;border-radius:14px;background:#EAF0FF">${ic('trend',24,'#2F6BFF',2.6)}</div>Vendas</div>
+   <div class="abs serif" id="n1" style="left:30px;top:100px;font-size:100px">R$ 0</div></div>
+ <div class="card" id="c2" style="left:1210px;top:360px;width:420px;height:224px">
+   <div class="abs" style="left:30px;top:28px;display:flex;align-items:center;gap:14px;font:600 24px Inter;color:#7A8599">
+     <div class="ico" style="width:44px;height:44px;border-radius:14px;background:#EAF0FF">${ic('eye',24,'#2F6BFF',2.4)}</div>Anúncio ativo<div class="dot" id="pd" style="margin-left:4px"></div></div>
+   <div class="abs serif" style="left:30px;top:100px;font-size:100px"><span id="n2">0</span><span style="font-size:52px;color:#7A8599"> mi alcance</span></div></div>
+ `,(t,sc)=>{
+  S(sc.q('#t'),pop(t,3.3,{dy:30}));
+  const ph=pop(t,3.4,{d:.8,dy:120,b0:18});ph.y+=Math.sin(t*1.3)*5;S(sc.q('#ph'),ph);
+  S(sc.q('#c1'),pop(t,5.6,{dx:-60,dy:0}));S(sc.q('#c2'),pop(t,6.3,{dx:60,dy:0}));
+  drawLine(sc.q('#ln1'),eo(P(t,5.55,.4)));drawLine(sc.q('#ln2'),eo(P(t,6.25,.4)));
+  sc.q('#n1').textContent='R$ '+fmt(12480*eo(P(t,5.7,1.4)));
+  sc.q('#n2').textContent=(2.4*eo(P(t,6.4,1.0))).toFixed(1).replace('.',',');
+  const pk=(t*1.6)%1;sc.q('#pd').style.boxShadow=`0 0 0 ${(4+pk*10).toFixed(1)}px rgba(47,107,255,${(.35*(1-pk)).toFixed(3)})`;
+ });
+// ================= S3  7.55 – 12.7  prompt + IA =================
+{
+ const PROMPT='Recria este anúncio validado em vídeo, com o meu produto.';
+ scene(7.55,12.7,`
+ <div class="title serif" id="ta" style="top:58px;font-size:80px">Eu te <span class="it blue">mostro</span></div>
+ <div class="title serif" id="tb" style="top:58px;font-size:80px">Aprende <span class="it blue">fazendo</span></div>
+ <div class="card" id="pc" style="left:460px;top:180px;width:1000px;height:250px">
+   <div class="abs" style="left:32px;top:26px;display:flex;align-items:center;gap:10px;font:600 22px Inter;color:#7A8599">${ic('spark',24,'#2F6BFF',0,true)}Novo criativo com IA</div>
+   <div class="abs" style="left:32px;top:72px;width:936px;font:500 36px/1.3 Inter;color:#0B1220"><span id="ty"></span><span id="ca" style="display:inline-block;width:3px;height:38px;background:#2F6BFF;vertical-align:-6px;margin-left:2px"></span></div>
+   <div class="abs" style="left:32px;bottom:24px;display:flex;align-items:center;gap:10px;background:#F4F6FA;border-radius:14px;padding:6px 14px 6px 6px;font:500 18px Inter;color:#7A8599">
+     <img src="${AD(0)}" style="width:42px;height:42px;border-radius:9px;object-fit:cover">anuncio-validado.png</div>
+   <div class="abs pill b" id="gb" style="right:28px;bottom:22px;height:58px;font-size:23px">${ic('spark',22,'#fff',0,true)}Gerar</div>
+ </div>
+ <svg class="lines">${[995,1225,1455].map((cx,i)=>`<path class="ln" d="M600 625 C 760 625, ${cx} 450, ${cx} 520" pathLength="1" stroke="#2F6BFF" stroke-width="3" stroke-dasharray="1" fill="none" stroke-linecap="round" opacity="0"/>`).join('')}</svg>
+ <div class="abs ico" id="hub" style="left:470px;top:560px;width:130px;height:130px;border-radius:38px;background:linear-gradient(140deg,#5C8DFF,#2F6BFF);box-shadow:0 26px 50px -16px rgba(47,107,255,.6)">${ic('spark',64,'#fff',0,true)}</div>
+ <div class="row" style="left:335px;width:400px;top:716px"><div class="pill" id="hl">Inteligência artificial</div></div>
+ ${[3,4,5].map((im,i)=>phone(AD(im),900+i*230,520,190,338,`<div class="abs ico" style="right:10px;top:10px;width:38px;height:38px;border-radius:50%;background:#2F6BFF">${ic('check',20,'#fff',3.2)}</div>`,'r'+i)).join('')}
+ ${CURSOR}
+ `,(t,sc)=>{
+  S(sc.q('#ta'),both(t,7.7,8.95,{dy:24}));S(sc.q('#tb'),pop(t,9.06,{dy:24}));
+  S(sc.q('#pc'),pop(t,7.65,{d:.7,dy:60}));
+  const n=Math.round(PROMPT.length*P(t,8.1,2.3));sc.q('#ty').textContent=PROMPT.slice(0,n);
+  sc.q('#ca').style.opacity=(t<10.4||Math.floor(t*2.5)%2)?1:0;
+  const c=sc.q('.cursor');const mk=eio(P(t,9.95,.7));cursorAt(c,lerp(1620,1350,mk),lerp(840,382,mk),clickK(t,10.7));
+  S(c,{o:cl(P(t,9.85,.2))*(1-P(t,11.6,.3))});
+  const gk=clickK(t,10.72);S(sc.q('#gb'),{s:1-.08*gk});sc.q('#gb').style.boxShadow=`0 0 0 ${(gk*14).toFixed(1)}px rgba(47,107,255,${(.25*gk).toFixed(2)}),0 16px 34px -12px rgba(47,107,255,.55)`;
+  S(sc.q('#hub'),pop(t,11.2,{s0:.5,dy:10}));S(sc.q('#hl'),pop(t,11.55,{dy:14}));
+  sc.qa('.ln').forEach((p,i)=>drawLine(p,eo(P(t,11.35+i*.15,.45))));
+  [0,1,2].forEach(i=>{const p=pop(t,11.55+i*.15,{dy:50,d:.6});p.y+=Math.sin(t*1.5+i)*4;S(sc.q('#r'+i),p)});
+ });
+}
+// ================= S4  12.7 – 18.85  criativos que já funcionam -> tua operação =================
+{
+ let tiles='';const N=24;const app=[];
+ for(let i=0;i<N;i++){const c=i%8,r=Math.floor(i/8);tiles+=`<div class="abs tl" style="left:${640+c*128}px;top:${240+r*215}px;width:112px;height:199px;border-radius:16px;overflow:hidden;box-shadow:0 14px 28px -14px rgba(20,40,100,.35);border:3px solid #fff"><img src="${AD(i%6)}" style="width:100%;height:100%;object-fit:cover"></div>`;
+   app.push(i==0?13.68:i<3?13.95+i*.14:14.4+(i-3)*.034)}
+ const rows=[['Criativo 01','3,4x',.82],['Criativo 02','2,8x',.64],['Criativo 03','4,1x',.91]];
+ scene(12.7,18.85,`
+ <div class="title serif" id="ta" style="top:70px;font-size:80px">Criativos que <span class="it blue">já funcionam</span></div>
+ <div class="title serif" id="tb" style="top:70px;font-size:80px">Aplica na <span class="it blue">tua operação</span></div>
+ <div class="card ico" id="nc" style="left:250px;top:420px;width:270px;height:270px"><div class="serif" id="num" style="font-size:180px;margin-top:10px">0</div></div>
+ <div class="row" style="left:185px;width:400px;top:726px"><div class="pill b" id="p1">${ic('check',22,'#fff',3)}Já funcionam</div></div>
+ <div class="row" style="left:185px;width:400px;top:800px"><div class="pill" id="p2">${ic('globe',22,'#2F6BFF',2.2)}Na internet</div></div>
+ ${tiles}
+ <div class="card" id="op" style="left:560px;top:220px;width:800px;height:620px">
+   <div class="abs serif" style="left:40px;top:38px;font-size:62px">Tua operação</div>
+   <div class="abs pill b sm" style="right:36px;top:44px"><span class="dot" style="background:#fff;box-shadow:none;width:10px;height:10px"></span>Ativa</div>
+   ${rows.map((r,j)=>`<div class="abs orow" style="left:36px;right:36px;top:${150+j*148}px;height:128px;border-radius:22px;background:#F6F8FC;border:1px solid #EDF0F6">
+     <img src="${AD(j)}" style="position:absolute;left:14px;top:12px;width:78px;height:104px;border-radius:12px;object-fit:cover">
+     <div class="abs" style="left:116px;top:28px;font:700 28px Inter">${r[0]}</div>
+     <div class="abs" style="left:116px;top:70px;font:500 19px Inter;color:#7A8599">Recriado com IA</div>
+     <div class="abs" style="left:350px;top:58px;width:200px;height:12px;border-radius:6px;background:#E3E9F5"><div class="bar" data-v="${r[2]}" style="height:100%;width:0;border-radius:6px;background:#2F6BFF"></div></div>
+     <div class="abs" style="right:28px;top:30px;text-align:right"><div style="font:500 16px Inter;color:#7A8599">ROAS</div><div class="serif" style="font-size:44px">${r[1]}</div></div></div>`).join('')}
+ </div>`,(t,sc)=>{
+  S(sc.q('#ta'),both(t,14.6,17.15,{dy:24}));S(sc.q('#tb'),pop(t,17.36,{dy:24}));
+  const cnt=app.filter(a=>t>=a).length;sc.q('#num').textContent=cnt;
+  const bump=app.reduce((m,a)=>Math.max(m,t>=a?1-P(t,a,.18):0),0);
+  const nc=both(t,13.0,17.15,{dy:40});nc.s*=1+.04*bump;S(sc.q('#nc'),nc);
+  S(sc.q('#p1'),both(t,15.05,17.15,{dy:14}));S(sc.q('#p2'),both(t,16.0,17.15,{dy:14}));
+  sc.qa('.tl').forEach((e,i)=>S(e,both(t,app[i],17.1+i*.012,{d:.4,dy:30,s0:.6,b0:8},{dy:-30})));
+  S(sc.q('#op'),pop(t,17.45,{d:.7,dy:80,b0:18}));
+  sc.qa('.orow').forEach((e,j)=>S(e,pop(t,17.75+j*.14,{dy:24})));
+  sc.qa('.bar').forEach((b,j)=>b.style.width=(100*b.dataset.v*eo(P(t,17.95+j*.14,1.0))).toFixed(1)+'%');
+ });
+}
+// ================= S5  18.85 – 24.1  sem conhecimentos técnicos =================
+{
+ const items=[['code','Programação'],['film','Edição avançada'],['pen','Design']];const at=[19.76,20.1,20.44];
+ scene(18.85,24.1,`
+ <div class="title serif" id="ta" style="top:80px;font-size:80px">Sem conhecimentos <span class="it blue">técnicos</span></div>
+ <div class="card" id="cd" style="left:580px;top:240px;width:760px;height:440px">
+   <div class="abs" style="left:40px;top:30px;font:600 22px Inter;letter-spacing:3px;color:#7A8599">NÃO É PRECISO</div>
+   ${items.map((it,j)=>`<div class="abs it5" style="left:40px;top:${86+j*114}px;width:680px;height:96px">
+     <div class="abs ico ib1" style="left:0;top:12px;width:72px;height:72px;border-radius:22px;background:#EEF3FF">${ic(it[0],32,'#2F6BFF',2.4)}</div>
+     <div class="abs ico ib2" style="left:0;top:12px;width:72px;height:72px;border-radius:22px;background:#F1F2F5;opacity:0">${ic('x',32,'#9AA3B5',2.8)}</div>
+     <div class="abs lb" style="left:100px;top:24px;font:600 38px Inter">${it[1]}</div>
+     <div class="abs sk" style="left:96px;top:48px;height:4px;width:0;background:#0B1220;border-radius:2px"></div></div>`).join('')}
+ </div>
+ <div class="abs ico" id="ck" style="left:880px;top:250px;width:160px;height:160px;border-radius:50%;background:linear-gradient(140deg,#5C8DFF,#2F6BFF);box-shadow:0 30px 60px -18px rgba(47,107,255,.6)">${ic('check',84,'#fff',3.2)}</div>
+ <div class="title serif" id="vc" style="top:470px;font-size:150px">Você <span class="it blue">consegue.</span></div>
+ `,(t,sc)=>{
+  S(sc.q('#ta'),both(t,19.3,22.4,{dy:24}));S(sc.q('#cd'),both(t,19.2,22.4,{d:.7,dy:60},{dy:-40}));
+  sc.qa('.it5').forEach((e,j)=>{S(e,pop(t,at[j],{dx:-30,dy:0}));
+    const k=eo(P(t,20.9+j*.12,.35));const lb=e.querySelector('.lb');
+    e.querySelector('.sk').style.width=(k*(lb.offsetWidth+8))+'px';lb.style.color=k>.5?'#9AA3B5':'#0B1220';
+    e.querySelector('.ib1').style.opacity=1-k;e.querySelector('.ib2').style.opacity=k});
+  S(sc.q('#ck'),pop(t,22.6,{s0:.4,dy:10,d:.6}));S(sc.q('#vc'),pop(t,22.92,{dy:40,b0:16}));
+ });
+}
+// ================= S6  24.1 – 28.15  biblioteca de anúncios =================
+{
+ const ads=[[0,'Glow Skin','Pele radiante em 7 dias.','#F7A8C4,#E2557F','1092384756'],[2,'Casa Verde','O smoothie que mudou a minha manhã.','#9BE3A8,#2FA65A','8817263540'],
+            [1,'Passo Leve','Leves como nunca. Corre mais.','#9CC3FF,#2F6BFF','5532019874'],[5,'Aqua Lux','A fragrância do verão chegou.','#A8E6F7,#2A9BC2','7741928306']];
+ const dates=['12 de out de 2026','3 de set de 2026','28 de ago de 2026','19 de set de 2026'];
+ scene(24.1,28.15,`
+ <div class="win" id="w" style="left:170px;top:60px;width:1580px;height:830px">
+   <div class="wbar"><div class="wd" style="left:22px"></div><div class="wd" style="left:44px"></div><div class="wd" style="left:66px"></div>
+     <div class="abs" style="left:530px;top:12px;width:520px;height:34px;border-radius:17px;background:#fff;border:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;gap:8px;font:500 17px Inter;color:#6B7280">${ic('lock',15,'#9CA3AF',2.4)}facebook.com/ads/library</div></div>
+   <div class="abs" style="left:40px;top:80px;font:700 36px Inter;color:#1C1E21;letter-spacing:-.5px">Biblioteca de Anúncios</div>
+   <div class="chip" style="left:40px;top:138px">Brasil${ic('chev',20,'#1C1E21',2.4)}</div>
+   <div class="chip" style="left:178px;top:138px">Todos os anúncios${ic('chev',20,'#1C1E21',2.4)}</div>
+   <div class="chip" id="sb" style="left:440px;top:138px;width:600px;font-weight:500;color:#1C1E21">${ic('search',22,'#65676B',2.4)}<span id="sq"></span><span id="sph" style="color:#8A8D91">Pesquisar por palavra-chave ou anunciante</span><span id="sc" style="width:2px;height:24px;background:#1C1E21"></span></div>
+   <div class="abs" id="rs" style="left:40px;top:206px;font:600 18px Inter;color:#65676B">Cerca de 1.240 resultados</div>
+   ${ads.map((a,i)=>`<div class="adc" style="left:${54+i*374}px">
+     <div class="in"><div class="st"><i></i>Ativo</div>
+       <div class="l">Identificação da biblioteca: ${a[4]}</div>
+       <div class="l">Veiculação iniciada em ${dates[i]}</div>
+       <div class="pl">Plataformas <b></b><b></b><b></b><b></b></div>
+       <div class="bt">Ver detalhes do anúncio</div></div>
+     <div class="adv"><div class="av" style="background:linear-gradient(135deg,${a[3]})"></div><div><div class="nm">${a[1]}</div><div class="sp">Patrocinado</div></div></div>
+     <div class="tx">${a[2]}</div>
+     <div class="im"><img src="${AD(a[0])}"></div></div>`).join('')}
+ </div>
+ <div class="abs" id="sel" style="left:223px;top:303px;width:352px;height:568px;border-radius:15px;box-shadow:0 0 0 5px #2F6BFF,0 30px 60px -20px rgba(47,107,255,.5)"></div>
+ <div class="row" style="left:100px;width:600px;top:256px"><div class="pill b" id="vp">${ic('check',22,'#fff',3)}Criativo validado · 47 dias ativo</div></div>
+ ${CURSOR}
+ `,(t,sc)=>{
+  S(sc.q('#w'),pop(t,24.15,{d:.7,dy:70,b0:16,s0:.94}));
+  const q='skincare',n=Math.round(q.length*P(t,24.5,.8));sc.q('#sq').textContent=q.slice(0,n);sc.q('#sph').style.display=n?'none':'inline';
+  sc.q('#sc').style.opacity=(Math.floor(t*2.5)%2)?1:0;S(sc.q('#rs'),pop(t,25.4,{dy:8}));
+  const cards=sc.qa('.adc');const sk=eo(P(t,27.7,.3));
+  cards.forEach((c,i)=>{const p=pop(t,25.85+i*.11,{d:.6,dy:50,b0:10});if(i)p.o*=1-.5*sk;S(c,p)});
+  const c=sc.q('.cursor');const mk=eio(P(t,26.75,.75));cursorAt(c,lerp(1640,410,mk),lerp(940,690,mk),clickK(t,27.55));S(c,{o:cl(P(t,26.65,.2))});
+  S(sc.q('#sel'),{o:sk,s:1.03-.03*sk});S(sc.q('#vp'),pop(t,27.72,{dy:16,s0:.6}));
+ });
+}
+// ================= S7  28.15 – 31.2  recriar com o Kling 4.0 =================
+scene(28.15,31.2,`
+ <div class="title serif" style="top:66px;font-size:84px"><span class="ib" id="ta">Recriar com o</span> <span class="ib it blue" id="tb">Kling 4.0</span></div>
+ <svg class="lines"><path id="ln1" d="M520 500 H636" pathLength="1" stroke="#2F6BFF" stroke-width="3" stroke-dasharray="1" fill="none" stroke-linecap="round"/>
+  <path id="ln2" d="M1284 500 H1400" pathLength="1" stroke="#2F6BFF" stroke-width="3" stroke-dasharray="1" fill="none" stroke-linecap="round"/>
+  <circle id="d1" r="7" fill="#2F6BFF"/><circle id="d2" r="7" fill="#2F6BFF"/></svg>
+ ${phone(AD(0),236,250,280,498,'','p0')}
+ <div class="row" style="left:176px;width:400px;top:780px"><div class="pill" id="l0">Original</div></div>
+ <div class="phone" id="kc" style="left:640px;top:320px;width:640px;height:360px;border-radius:30px"><canvas id="kcv" width="960" height="540"></canvas></div>
+ <div class="row" style="left:760px;width:400px;top:712px"><div class="pill b" id="kl">${ic('spark',22,'#fff',0,true)}Kling 4.0</div></div>
+ ${phone('canvas:kv0',1404,250,280,498,'','p1')}
+ <div class="row" style="left:1344px;width:400px;top:780px"><div class="pill" id="l1">${ic('check',20,'#2F6BFF',3)}Recriado</div></div>
+ `,(t,sc)=>{
+  S(sc.q('#ta'),pop(t,28.38,{dy:30}));S(sc.q('#tb'),pop(t,29.8,{dy:30,s0:.8}));
+  S(sc.q('#p0'),pop(t,28.25,{d:.7,dy:80}));S(sc.q('#l0'),pop(t,28.6,{dy:12}));
+  S(sc.q('#kc'),pop(t,29.45,{d:.6,s0:.85,dy:30}));S(sc.q('#kl'),pop(t,29.85,{dy:12}));
+  drawSeq(sc.q('#kcv'),'k4',t-29.45);
+  S(sc.q('#p1'),pop(t,30.3,{d:.6,dy:80}));S(sc.q('#l1'),pop(t,30.6,{dy:12}));
+  drawSeq(sc.q('#p1 canvas'),'kv0',t-30.3,.75);
+  const k1=eo(P(t,29.2,.4)),k2=eo(P(t,30.15,.4));drawLine(sc.q('#ln1'),k1);drawLine(sc.q('#ln2'),k2);
+  const d1=sc.q('#d1'),d2=sc.q('#d2');d1.setAttribute('cx',520+116*((t*.9)%1));d1.setAttribute('cy',500);d1.style.opacity=k1;
+  d2.setAttribute('cx',1284+116*((t*.9+.5)%1));d2.setAttribute('cy',500);d2.style.opacity=k2;
+ });
+// ================= S8  31.2 – 37.0  lançada recentemente / alta qualidade / minutos =================
+scene(31.2,37.0,`
+ <div class="title serif" id="ta" style="top:66px;font-size:84px">Lançado <span class="it blue">recentemente</span></div>
+ <div class="title serif" id="tb" style="top:66px;font-size:84px">Vídeos de <span class="it blue">alta qualidade</span></div>
+ <div class="title serif" id="tc" style="top:66px;font-size:84px">Em questão de <span class="it blue">minutos</span></div>
+ <div class="phone" id="kc" style="left:170px;top:220px;width:800px;height:450px;border-radius:32px"><canvas id="kcv" width="1200" height="675"></canvas></div>
+ <div class="abs pill b" id="nw" style="left:198px;top:246px">${ic('spark',22,'#fff',0,true)}Novo · Kling 4.0</div>
+ ${phone('canvas:kv0',1080,200,300,533,'','q0')}${phone('canvas:kv1',1420,200,300,533,'','q1')}
+ <div class="row" style="left:1200px;width:400px;top:770px"><div class="pill" id="hq">${ic('hd',26,'#2F6BFF',2)}Alta qualidade</div></div>
+ <div class="card" id="pg" style="left:170px;top:706px;width:800px;height:150px">
+   <div class="abs" style="left:32px;top:28px;display:flex;align-items:center;gap:12px;font:600 26px Inter">${ic('clock',28,'#2F6BFF',2.4)}<span id="gt">A gerar vídeo…</span></div>
+   <div class="abs serif" id="pct" style="right:32px;top:18px;font-size:64px">0%</div>
+   <div class="abs" style="left:32px;right:32px;top:98px;height:14px;border-radius:7px;background:#E3E9F5"><div id="pb" style="height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#6C97FF,#2F6BFF)"></div></div></div>
+ `,(t,sc)=>{
+  S(sc.q('#ta'),both(t,31.95,33.3,{dy:24}));S(sc.q('#tb'),both(t,33.42,35.7,{dy:24}));S(sc.q('#tc'),pop(t,35.8,{dy:24}));
+  S(sc.q('#kc'),pop(t,31.25,{d:.6,dy:40,s0:.95}));drawSeq(sc.q('#kcv'),'k4',t-29.45);
+  S(sc.q('#nw'),pop(t,31.55,{dy:12,s0:.6}));
+  const a=pop(t,33.95,{d:.7,dy:90});a.y+=Math.sin(t*1.3)*5;S(sc.q('#q0'),a);
+  const b=pop(t,34.15,{d:.7,dy:90});b.y+=Math.sin(t*1.3+1)*5;S(sc.q('#q1'),b);
+  drawSeq(sc.q('#q0 canvas'),'kv0',t-30.3,.75);drawSeq(sc.q('#q1 canvas'),'kv1',t-34.0,1);
+  S(sc.q('#hq'),pop(t,34.85,{dy:14}));
+  S(sc.q('#pg'),pop(t,35.0,{dy:40}));const k=eio(P(t,35.2,1.3));
+  sc.q('#pb').style.width=(k*100).toFixed(1)+'%';sc.q('#pct').textContent=Math.round(k*100)+'%';
+  sc.q('#gt').textContent=k>=1?'Vídeo pronto':'A gerar vídeo…';
+ });
+// ================= S9  37.0 – 41.55  na prática / tela do PC =================
+scene(37.0,41.55,`
+ <div class="title serif" id="ta" style="top:46px;font-size:80px">Como fazer na <span class="it blue">prática</span></div>
+ <div class="abs" id="mon" style="left:0;top:0;width:1920px;height:1080px;transform-origin:960px 474px">
+  <div class="abs" style="left:900px;top:776px;width:120px;height:74px;background:linear-gradient(#CBD3E1,#AEB8CA)"></div>
+  <div class="abs" style="left:770px;top:846px;width:380px;height:18px;border-radius:9px;background:#B7C1D3;box-shadow:0 20px 30px -12px rgba(20,40,100,.35)"></div>
+  <div class="abs" style="left:420px;top:166px;width:1080px;height:616px;border-radius:26px;background:#141A27;padding:14px;box-shadow:0 50px 90px -30px rgba(20,40,100,.45)">
+   <div style="position:relative;width:100%;height:100%;border-radius:14px;overflow:hidden;background:#fff">
+    <div class="abs" style="left:0;top:0;bottom:0;width:170px;background:#F4F6FA;border-right:1px solid #E5E9F2">
+      <div class="abs" style="left:20px;top:22px;width:34px;height:34px;border-radius:10px;background:#2F6BFF"></div>
+      ${[0,1,2,3,4].map(i=>`<div class="abs" style="left:20px;top:${86+i*40}px;width:${[110,90,120,80,100][i]}px;height:12px;border-radius:6px;background:${i==1?'#2F6BFF':'#DCE2EC'}"></div>`).join('')}</div>
+    <div class="abs" style="left:198px;top:22px;font:700 24px Inter;color:#1C1E21">Biblioteca de Anúncios</div>
+    <div class="abs" style="left:198px;top:62px;width:420px;height:34px;border:1px solid #CED0D4;border-radius:8px;font:500 15px Inter;color:#1C1E21;display:flex;align-items:center;gap:8px;padding:0 10px">${ic('search',16,'#65676B',2.4)}skincare</div>
+    ${[0,2,1,5].map((im,i)=>`<div class="abs" style="left:${198+i*162}px;top:116px;width:148px;height:262px;border-radius:10px;overflow:hidden;border:1px solid #DADDE1"><img src="${AD(im)}" style="width:100%;height:100%;object-fit:cover"></div>`).join('')}
+    ${[0,1,2,3].map(i=>`<div class="abs" style="left:${198+i*162}px;top:392px;width:${[120,96,130,104][i]}px;height:10px;border-radius:5px;background:#E4E6EB"></div>`).join('')}
+    <div class="abs" style="left:858px;top:22px;width:180px;bottom:22px;border-radius:14px;background:#F4F6FA;border:1px solid #E5E9F2">
+      <div class="abs" style="left:14px;top:14px;display:flex;align-items:center;gap:6px;font:700 16px Inter;color:#2F6BFF">${ic('spark',16,'#2F6BFF',0,true)}Kling 4.0</div>
+      <div class="abs" style="left:14px;top:48px;width:152px;height:270px;border-radius:12px;overflow:hidden"><canvas id="mcv" width="228" height="405" style="width:100%;height:100%"></canvas></div>
+      <div class="abs" style="left:14px;top:332px;width:152px;height:36px;border-radius:18px;background:#2F6BFF;color:#fff;font:700 15px Inter;display:flex;align-items:center;justify-content:center">Gerar</div>
+    </div>
+   </div></div>
+  ${CURSOR}
+ </div>
+ `,(t,sc)=>{
+  S(sc.q('#ta'),both(t,37.4,40.5,{dy:24}));
+  const zk=eio(P(t,40.7,.85));const m=pop(t,37.05,{d:.8,dy:90,b0:16,s0:.92});
+  m.s*=1+1.6*zk;m.b+=P(t,41.1,.45)*24;m.o*=1-P(t,41.25,.3);S(sc.q('#mon'),m);
+  drawSeq(sc.q('#mcv'),'kv1',t-37.0,1);
+  const c=sc.q('.cursor');const k1=eio(P(t,37.9,.8)),k2=eio(P(t,39.1,.7));
+  cursorAt(c,lerp(lerp(1300,900,k1),1340,k2),lerp(lerp(700,420,k1),520,k2),clickK(t,39.85));S(c,{o:cl(P(t,37.8,.2))});
+ });
+// ================= S10  41.55 – 44.1  ver como funciona =================
+scene(41.55,44.2,`
+ <div class="abs ico" id="pl" style="left:890px;top:200px;width:140px;height:140px;border-radius:42px;background:linear-gradient(140deg,#5C8DFF,#2F6BFF);box-shadow:0 30px 60px -18px rgba(47,107,255,.6)">${ic('play',62,'#fff',0,true)}</div>
+ <div class="title serif" id="ta" style="top:400px;font-size:140px">Vê como funciona</div>
+ <div class="title serif it blue" id="tb" style="top:550px;font-size:140px">numa boa.</div>
+ <svg class="lines"><path id="ul" d="M745 712 C 860 696, 1060 696, 1175 708" pathLength="1" stroke="#2F6BFF" stroke-width="6" stroke-dasharray="1" fill="none" stroke-linecap="round"/></svg>
+ `,(t,sc)=>{
+  S(sc.q('#pl'),pop(t,41.65,{s0:.4,dy:10,d:.6}));S(sc.q('#ta'),pop(t,42.0,{dy:40,b0:16}));
+  S(sc.q('#tb'),pop(t,43.3,{dy:40,b0:16,s0:.85}));drawLine(sc.q('#ul'),eo(P(t,43.55,.45)));
+ });
+
+// ================= captions =================
+const WORDS=[["Nesse",0.0],["vídeo",.38],["eu",.66],["vou",.8],["te",.9],["ensinar",1.08],["como",1.3],["criar",1.62],["criativos",1.82],["validados.",2.3],["O",3.2],["mesmo",3.3],["modelo",3.5],["de",3.84],["criativo",4.12],["que",4.56],["eu",4.78],["uso",5.02],["para",5.2],["vender",5.68],["e",6.12],["anunciar",6.38],["na",6.86],["internet.",7.06],["Isso",7.6],["eu",7.76],["vou",7.9],["te",8.0],["mostrar.",8.18],["Você",8.64],["vai",8.84],["aprender",9.06],["fazendo",9.36],["criativos",9.84],["usando",10.66],["inteligência",11.24],["artificial.",11.92],["Basicamente",12.78],["você",13.22],["vai",13.52],["pegar",13.68],["criativos",14.02],["que",14.7],["já",14.86],["funcionam,",15.1],["que",15.64],["estão",15.8],["aí",15.88],["na",16.06],["internet.",16.28],["E",16.66],["você",16.82],["vai",17.08],["aplicar",17.36],["na",17.74],["tua",17.88],["operação.",17.98],["Você",18.9],["não",19.14],["precisa",19.32],["ter",19.54],["conhecimentos",19.76],["técnicos",20.44],["nem",20.9],["nada.",21.14],["Com",21.56],["o",21.68],["que",21.72],["eu",21.8],["vou",21.92],["te",22.02],["mostrar",22.18],["aqui,",22.42],["você",22.62],["consegue",22.94],["fazer",23.24],["isso.",23.6],["Nós",24.18],["vamos",24.32],["pegar",24.5],["criativos",24.74],["validados",25.18],["na",25.8],["biblioteca",25.96],["de",26.54],["anúncios",26.68],["em",26.92],["qualquer",27.1],["parte",27.34],["da",27.54],["internet.",27.8],["E",28.16],["recriar",28.4],["eles",28.8],["com",29.04],["o",29.6],["Kling",29.82],["4.0.",30.04],["Que",31.24],["é",31.28],["uma",31.36],["IA",31.5],["que",31.76],["foi",31.78],["lançada",32.0],["recentemente.",32.46],["Que",33.28],["permite",33.42],["criar",33.82],["vídeos",34.08],["de",34.44],["alta",34.66],["qualidade",34.9],["em",35.5],["questão",35.82],["de",36.16],["minutos.",36.48],["Então",37.02],["você",37.38],["vai",37.82],["ver",37.98],["como",38.1],["fazer",38.3],["isso",38.58],["na",38.82],["prática.",39.08],["Sem",39.52],["mais",39.74],["demora.",39.88],["Vamos",40.28],["à",40.52],["tela",40.72],["do",40.88],["PC.",41.1],["Para",41.64],["você",41.8],["ver",42.02],["como",42.14],["funciona",42.42],["isso",42.9],["numa",43.38],["boa.",43.7]];
+const CH=[];{let cur=[];WORDS.forEach((w,i)=>{cur.push(w);const nx=WORDS[i+1];const brk=/[.,!?]$/.test(w[0])||cur.length>=5||(nx&&nx[1]-w[1]>.9)||!nx;if(brk){CH.push(cur);cur=[]}})}
+const capEl=document.getElementById('cap');let curCh=-1;
+function caps(t){let idx=-1;for(let i=0;i<CH.length;i++){if(t>=CH[i][0][1]-.05)idx=i}
+  const last=CH[CH.length-1];if(idx<0||t>last[last.length-1][1]+1.2){capEl.innerHTML='';curCh=-1;return}
+  if(idx!==curCh){capEl.innerHTML=CH[idx].map(w=>`<span>${w[0]}</span>`).join('');curCh=idx}
+  const sp=capEl.children;let cw=-1;CH[idx].forEach((w,j)=>{if(t>=w[1]-.03)cw=j});
+  CH[idx].forEach((w,j)=>{const e=sp[j];const k=eo(P(t,w[1]-.03,.18));e.style.opacity=(.22+.78*k).toFixed(3);
+    e.style.transform=`translateY(${((1-k)*8).toFixed(1)}px)`;e.style.color=j===cw?'#2F6BFF':'#0B1220'})}
+
+// ================= background + render =================
+const bg=document.getElementById('bg');
+function render(t){
+  const gx=50+Math.sin(t*.25)*12,gy=20+Math.cos(t*.2)*8;
+  bg.style.background=`radial-gradient(ellipse 55% 45% at ${gx}% ${gy}%,rgba(47,107,255,.13),transparent 70%),radial-gradient(ellipse 40% 40% at ${100-gx}% 95%,rgba(120,160,255,.10),transparent 70%),#F5F7FB`;
+  for(const sc of scenes){const{a,z}=sc;const vis=t>=a-.001&&t<z+.42;sc.root.style.display=vis?'block':'none';if(!vis)continue;
+    let o=1,s=1,b=0;if(a>0){const k=eo(P(t,a,.42));o=k;s=1.045-.045*k;b=(1-k)*18}
+    if(t>z-.04){const k=eio(P(t,z-.04,.42));o*=1-k;s*=1-.035*k;b+=k*24}
+    S(sc.root,{o,s,b});sc.upd(t,sc)}
+  caps(t);
+}
+window.render=render;
+(async()=>{await document.fonts.ready;
+  await Promise.all([...document.images].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r})));
+  const seqs=Object.values(SEQ).flat();await Promise.all(seqs.map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r})));
+  render(0);window.READY=true})();
+</script>
+</body>
+</html>
